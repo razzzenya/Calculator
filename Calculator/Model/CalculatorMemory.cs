@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media.Animation;
 using Calculator.Services;
 
 namespace Calculator.Model
@@ -52,20 +53,16 @@ namespace Calculator.Model
 
         private string CountExpr(string expr)
         {
-            try
+            expr = expr.Replace(",", ".");
+            DataTable table = new DataTable();
+            table.Columns.Add("expression", typeof(string), expr);
+            DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            if (double.IsInfinity(double.Parse((string)row["expression"])))
             {
-                expr = expr.Replace(",", ".");
-                DataTable table = new DataTable();
-                table.Columns.Add("expression", typeof(string), expr);
-                DataRow row = table.NewRow();
-                table.Rows.Add(row);
-                double result = double.Parse((string)row["expression"]);
-                return result.ToString();
+                return "Недопустимая операция или деление на ноль";
             }
-            catch (DivideByZeroException)
-            {
-                return "Деление на ноль невозможно!";
-            }
+            return (string)row["expression"];
         }
 
         public void Clean()
